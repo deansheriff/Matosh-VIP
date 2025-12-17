@@ -1,0 +1,183 @@
+/*
+ * Matosh POS - Custom Stylesheet
+ * Author: Gemini AI
+ * Primary Color: #3F8522
+ */
+
+:root {
+    --primary-color: #3F8522;
+    --primary-hover-color: #356e1d;
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+    --dark-gray: #6c757d;
+    --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --border-radius: 0.5rem;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--light-gray);
+    color: #343a40;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: var(--border-radius);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover-color);
+    border-color: var(--primary-hover-color);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(63, 133, 34, 0.25);
+}
+
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--medium-gray);
+    font-weight: 600;
+}
+
+/* Kanban Board Styles */
+.kanban-board {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    min-height: 75vh;
+}
+
+.kanban-column {
+    flex: 1 0 300px;
+    min-width: 300px;
+    background-color: var(--medium-gray);
+    border-radius: var(--border-radius);
+    padding: 0.75rem;
+}
+
+.kanban-column-title {
+    font-weight: 600;
+    padding: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--dark-gray);
+}
+
+.kanban-cards {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.kanban-card {
+    background-color: var(--white);
+    border-left: 4px solid var(--primary-color);
+    padding: 0.5rem;
+    cursor: grab;
+}
+
+.kanban-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.kanban-card .card-text {
+    font-size: 0.8rem;
+    color: var(--dark-gray);
+    margin-bottom: 0.25rem;
+    display: none; /* Hide the list of items */
+}
+
+.kanban-card .badge {
+    font-size: 0.7rem;
+}
+
+.kanban-card .mt-3 {
+    margin-top: 0.5rem !important;
+}
+
+.kanban-card-footer {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Login Page */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--light-gray);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+/* General Utility */
+.fw-bold {
+    font-weight: 600 !important;
+}
+
+/* Toast Notification */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1055;
+}
+
+.toast-notification {
+    background-color: #333;
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(20px);
+}
+
+.toast-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-notification.success {
+    background-color: var(--primary-color);
+}
+
+.toast-notification.error {
+    background-color: #dc3545;
+}
