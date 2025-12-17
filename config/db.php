@@ -13,11 +13,16 @@
 // For this example, we'll use getenv() which works with web server configs,
 // or you can define them directly for simplicity.
 
+// Helper function to safely get env variables
+function get_env_var($key, $default = null) {
+    return getenv($key) ?: ($_ENV[$key] ?? ($_SERVER[$key] ?? $default));
+}
+
 // Define database credentials with fallbacks
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('DB_NAME') ?: 'hellosil_res');
-define('DB_USER', getenv('DB_USER') ?: 'hellosil_res');
-define('DB_PASS', getenv('DB_PASS') ?: 'Donjazzy123?');
+define('DB_HOST', get_env_var('DB_HOST', '127.0.0.1')); // Default to TCP loopback, not socket
+define('DB_NAME', get_env_var('DB_NAME', 'hellosil_res'));
+define('DB_USER', get_env_var('DB_USER', 'hellosil_res'));
+define('DB_PASS', get_env_var('DB_PASS', 'Donjazzy123?'));
 
 // Define currency symbol
 // define('CURRENCY_SYMBOL', '₦'); // Defined in header.php from DB settings
@@ -41,10 +46,12 @@ try {
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
     // If connection fails, stop the script and show an error.
-    // In a production environment, you'd want to log this error, not display it.
     error_log("Database Connection Error: " . $e->getMessage());
-    // SHOWING ERROR FOR DEBUGGING - Revert to generic message for production later
-    die("Database connection failed: " . $e->getMessage()); 
+    // SHOWING ERROR FOR DEBUGGING
+    die("Database connection failed: " . $e->getMessage() . 
+        " <br>Host: " . DB_HOST . 
+        " <br>User: " . DB_USER . 
+        " <br>(Check Env Vars in Coolify/Docker)"); 
 }
 
 // The $pdo object is now available for use in other scripts.
