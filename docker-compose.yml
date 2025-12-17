@@ -23,7 +23,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       # Mount the SQL dump to initialize the database
-      - ./hellosil_res (2).sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db_init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "${DB_PORT:-3306}:3306"
 
