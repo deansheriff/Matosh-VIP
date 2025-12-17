@@ -18,11 +18,16 @@ function get_env_var($key, $default = null) {
     return getenv($key) ?: ($_ENV[$key] ?? ($_SERVER[$key] ?? $default));
 }
 
+// Detect if running in Docker
+$is_docker = file_exists('/.dockerenv');
+
 // Define database credentials with fallbacks
-define('DB_HOST', get_env_var('DB_HOST', '127.0.0.1')); // Default to TCP loopback, not socket
+// If in Docker, default to 'db' host and 'root' user (matching docker-compose)
+// Otherwise, use local development defaults
+define('DB_HOST', get_env_var('DB_HOST', $is_docker ? 'db' : '127.0.0.1'));
 define('DB_NAME', get_env_var('DB_NAME', 'hellosil_res'));
-define('DB_USER', get_env_var('DB_USER', 'hellosil_res'));
-define('DB_PASS', get_env_var('DB_PASS', 'Donjazzy123?'));
+define('DB_USER', get_env_var('DB_USER', $is_docker ? 'root' : 'hellosil_res'));
+define('DB_PASS', get_env_var('DB_PASS', $is_docker ? 'root' : 'Donjazzy123?'));
 
 // Define currency symbol
 // define('CURRENCY_SYMBOL', '₦'); // Defined in header.php from DB settings
