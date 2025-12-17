@@ -20,7 +20,7 @@ define('DB_USER', getenv('DB_USER') ?: 'hellosil_res');
 define('DB_PASS', getenv('DB_PASS') ?: 'Donjazzy123?');
 
 // Define currency symbol
-define('CURRENCY_SYMBOL', '₦');
+// define('CURRENCY_SYMBOL', '₦'); // Defined in header.php from DB settings
 
 // Set the default timezone
 // A list of supported timezones can be found here: https://www.php.net/manual/en/timezones.php
@@ -43,7 +43,8 @@ try {
     // If connection fails, stop the script and show an error.
     // In a production environment, you'd want to log this error, not display it.
     error_log("Database Connection Error: " . $e->getMessage());
-    die("Database connection failed. Please check your configuration.");
+    // SHOWING ERROR FOR DEBUGGING - Revert to generic message for production later
+    die("Database connection failed: " . $e->getMessage()); 
 }
 
 // The $pdo object is now available for use in other scripts.
