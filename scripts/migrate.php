@@ -22,6 +22,7 @@ $retry_delay = 2; // seconds
 $pdo = null;
 
 echo "Starting database migration...\n";
+echo "Host: $host, Database: $name, User: $user\n";
 
 for ($i = 0; $i < $max_retries; $i++) {
     try {
@@ -30,8 +31,7 @@ for ($i = 0; $i < $max_retries; $i++) {
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => true, // Enable emulated prepares for multi-statement execution
-            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_general_ci",
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
         ];
         $pdo = new PDO($dsn, $user, $pass, $options);
         echo "Database connection successful.\n";
@@ -49,7 +49,7 @@ if (!$pdo) {
 
 // Migration logic
 try {
-    // Check if database exists
+    // Check if database exists, create if not
     $stmt = $pdo->query("SHOW DATABASES LIKE '$name'");
     if ($stmt->rowCount() == 0) {
         echo "Database '$name' not found. Creating...\n";
@@ -60,10 +60,10 @@ try {
     // Select the database
     $pdo->exec("USE `$name`");
 
-    // Check if company_settings table exists (as a proxy for whether the schema is initialized)
-    $stmt = $pdo->query("SHOW TABLES LIKE 'company_settings'");
+    // Check if users table exists (critical table for the app)
+    $stmt = $pdo->query("SHOW TABLES LIKE 'users'");
     if ($stmt->rowCount() == 0) {
-        echo "Tables not found. Importing db_init.sql...\n";
+        echo "Table 'users' not found. Importing full schema...\n";
         
         // Read the SQL file
         $sqlFile = __DIR__ . '/../db_init.sql';
@@ -72,41 +72,72 @@ try {
             exit(1);
         }
         
-        // Use mysql command line to import (more reliable for multi-statement SQL with special chars)
-        $cmd = "mysql -h " . escapeshellarg($host) . 
-               " -u " . escapeshellarg($user) . 
-               " -p" . escapeshellarg($pass) . 
-               " " . escapeshellarg($name) . 
-               " < " . escapeshellarg($sqlFile) . " 2>&1";
+        echo "Reading SQL file: $sqlFile\n";
+        $sql = file_get_contents($sqlFile);
+        echo "SQL file size: " . strlen($sql) . " bytes\n";
         
-        $output = [];
-        $returnVar = 0;
-        exec($cmd, $output, $returnVar);
+        // Remove comments and split by semicolons, but be careful with string content
+        // First, remove single-line comments
+        $sql = preg_replace('/^--.*$/m', '', $sql);
+        // Remove multi-line comments
+        $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
         
-        if ($returnVar !== 0) {
-            echo "MySQL import failed. Trying PDO fallback...\n";
-            echo implode("\n", $output) . "\n";
+        // Split into statements by semicolon followed by newline
+        $statements = preg_split('/;\s*[\r\n]+/', $sql);
+        
+        $successCount = 0;
+        $errorCount = 0;
+        
+        foreach ($statements as $statement) {
+            $statement = trim($statement);
             
-            // Fallback to PDO multi-statement execution
-            $sql = file_get_contents($sqlFile);
+            // Skip empty statements and certain control statements
+            if (empty($statement)) continue;
+            if (preg_match('/^(SET|START TRANSACTION|COMMIT|\/\*!)/i', $statement)) {
+                // These are usually safe to execute
+                try {
+                    $pdo->exec($statement);
+                } catch (PDOException $e) {
+                    // Ignore errors on SET statements
+                }
+                continue;
+            }
             
-            // Split into individual statements and execute
-            $statements = array_filter(array_map('trim', explode(';', $sql)));
-            foreach ($statements as $statement) {
-                if (!empty($statement) && !preg_match('/^--/', $statement)) {
-                    try {
-                        $pdo->exec($statement);
-                    } catch (PDOException $e) {
-                        // Skip errors on comments or empty statements
-                        if (strpos($e->getMessage(), 'syntax error') === false) {
-                            echo "Warning: " . $e->getMessage() . "\n";
-                        }
-                    }
+            try {
+                $pdo->exec($statement);
+                $successCount++;
+            } catch (PDOException $e) {
+                $errorCount++;
+                // Only log significant errors
+                if (strpos($e->getMessage(), 'already exists') === false && 
+                    strpos($e->getMessage(), 'Duplicate entry') === false) {
+                    echo "Warning: " . substr($e->getMessage(), 0, 100) . "\n";
                 }
             }
         }
         
-        echo "Database schema imported successfully.\n";
+        echo "Executed $successCount statements successfully";
+        if ($errorCount > 0) {
+            echo " ($errorCount warnings/errors)";
+        }
+        echo "\n";
+        
+        // Verify critical tables exist
+        $criticalTables = ['users', 'company_settings', 'menu_items', 'orders', 'tables'];
+        $missingTables = [];
+        foreach ($criticalTables as $table) {
+            $stmt = $pdo->query("SHOW TABLES LIKE '$table'");
+            if ($stmt->rowCount() == 0) {
+                $missingTables[] = $table;
+            }
+        }
+        
+        if (!empty($missingTables)) {
+            echo "ERROR: Missing critical tables: " . implode(', ', $missingTables) . "\n";
+            exit(1);
+        }
+        
+        echo "All critical tables verified.\n";
     } else {
         echo "Tables already exist. Skipping import.\n";
     }
