@@ -2,7 +2,9 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../config/db.php';
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $current_page = basename($_SERVER['PHP_SELF']);
 
 // Fetch company settings
