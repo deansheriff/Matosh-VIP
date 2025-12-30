@@ -10,7 +10,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
 // Fetch company settings
 $company_stmt = $pdo->query("SELECT * FROM company_settings WHERE id = 1");
 $company_settings = $company_stmt->fetch();
-define('CURRENCY_SYMBOL', $company_settings['currency_symbol'] ?? '$');
+if (!defined('CURRENCY_SYMBOL')) {
+    define('CURRENCY_SYMBOL', $company_settings['currency_symbol'] ?? '$');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

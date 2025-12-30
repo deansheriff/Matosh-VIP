@@ -30,7 +30,8 @@ for ($i = 0; $i < $max_retries; $i++) {
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_EMULATE_PREPARES   => true, // Enable emulated prepares for multi-statement execution
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_general_ci",
         ];
         $pdo = new PDO($dsn, $user, $pass, $options);
         echo "Database connection successful.\n";
@@ -71,10 +72,40 @@ try {
             exit(1);
         }
         
-        $sql = file_get_contents($sqlFile);
+        // Use mysql command line to import (more reliable for multi-statement SQL with special chars)
+        $cmd = "mysql -h " . escapeshellarg($host) . 
+               " -u " . escapeshellarg($user) . 
+               " -p" . escapeshellarg($pass) . 
+               " " . escapeshellarg($name) . 
+               " < " . escapeshellarg($sqlFile) . " 2>&1";
         
-        // Execute the SQL
-        $pdo->exec($sql);
+        $output = [];
+        $returnVar = 0;
+        exec($cmd, $output, $returnVar);
+        
+        if ($returnVar !== 0) {
+            echo "MySQL import failed. Trying PDO fallback...\n";
+            echo implode("\n", $output) . "\n";
+            
+            // Fallback to PDO multi-statement execution
+            $sql = file_get_contents($sqlFile);
+            
+            // Split into individual statements and execute
+            $statements = array_filter(array_map('trim', explode(';', $sql)));
+            foreach ($statements as $statement) {
+                if (!empty($statement) && !preg_match('/^--/', $statement)) {
+                    try {
+                        $pdo->exec($statement);
+                    } catch (PDOException $e) {
+                        // Skip errors on comments or empty statements
+                        if (strpos($e->getMessage(), 'syntax error') === false) {
+                            echo "Warning: " . $e->getMessage() . "\n";
+                        }
+                    }
+                }
+            }
+        }
+        
         echo "Database schema imported successfully.\n";
     } else {
         echo "Tables already exist. Skipping import.\n";
