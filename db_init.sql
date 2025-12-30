@@ -35,7 +35,7 @@ CREATE TABLE `company_settings` (
   `email` varchar(255) NOT NULL,
   `logo` varchar(255) DEFAULT NULL,
   `currency_symbol` varchar(5) NOT NULL DEFAULT '$'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `company_settings`
@@ -56,7 +56,7 @@ CREATE TABLE `customers` (
   `phone` varchar(50) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customers`
@@ -79,7 +79,7 @@ CREATE TABLE `menu_items` (
   `price` decimal(10,2) NOT NULL,
   `availability` tinyint(1) NOT NULL DEFAULT '1',
   `image` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `menu_items`
@@ -148,7 +148,7 @@ CREATE TABLE `orders` (
   `payment_status` enum('Unpaid','Partially Paid','Paid') NOT NULL DEFAULT 'Unpaid',
   `total_price` decimal(10,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `orders`
@@ -340,7 +340,7 @@ CREATE TABLE `order_items` (
   `quantity` int NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `subtotal` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `order_items`
@@ -1352,7 +1352,7 @@ CREATE TABLE `payments` (
   `amount` decimal(10,2) NOT NULL,
   `payment_type` enum('cash','card','transfer') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payments`
@@ -1553,7 +1553,7 @@ CREATE TABLE `tables` (
   `id` int NOT NULL,
   `table_number` varchar(50) NOT NULL,
   `status` enum('available','occupied') NOT NULL DEFAULT 'available'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tables`
@@ -1586,7 +1586,7 @@ CREATE TABLE `tax_settings` (
   `tax_rate` decimal(10,2) NOT NULL,
   `tax_type` enum('percentage','fixed') NOT NULL DEFAULT 'percentage',
   `is_active` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1600,7 +1600,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('Admin','Cashier','Waiter','Kitchen') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`

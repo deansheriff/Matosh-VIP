@@ -61,7 +61,7 @@ try {
           `role` enum('Admin','Cashier','Waiter','Kitchen') NOT NULL,
           PRIMARY KEY (`id`),
           UNIQUE KEY `email` (`email`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci";
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
         
         $pdo->exec($sql);
         echo "Table 'users' created successfully.\n";
