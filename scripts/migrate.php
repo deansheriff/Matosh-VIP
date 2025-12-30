@@ -138,6 +138,10 @@ try {
         }
         
         echo "All critical tables verified.\n";
+        
+        // Fix currency symbol encoding - explicitly set to Naira symbol
+        echo "Setting currency symbol to Naira (₦)...\n";
+        $pdo->exec("UPDATE company_settings SET currency_symbol = '₦' WHERE id = 1");
     } else {
         echo "Tables already exist. Skipping import.\n";
     }

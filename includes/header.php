@@ -10,8 +10,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
 // Fetch company settings
 $company_stmt = $pdo->query("SELECT * FROM company_settings WHERE id = 1");
 $company_settings = $company_stmt->fetch();
+
+// Validate currency symbol - if corrupted (too long), use default Naira symbol
+$currency_symbol = $company_settings['currency_symbol'] ?? '₦';
+// A valid currency symbol should be at most 4 bytes (UTF-8 characters can be up to 4 bytes)
+if (strlen($currency_symbol) > 10 || is_numeric($currency_symbol)) {
+    $currency_symbol = '₦'; // Fallback to Naira symbol
+}
+
 if (!defined('CURRENCY_SYMBOL')) {
-    define('CURRENCY_SYMBOL', $company_settings['currency_symbol'] ?? '$');
+    define('CURRENCY_SYMBOL', $currency_symbol);
 }
 ?>
 <!DOCTYPE html>
