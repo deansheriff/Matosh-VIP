@@ -69,10 +69,10 @@ try {
         // Insert default users from dump
         echo "Seeding users table...\n";
         $insertSql = "INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`) VALUES
-            (2, 'Cashier User', 'cashier@example.com', '$2y$10$N9.gBY.G.bVbT9CqK.E2.O0R0M.lI.H/GAg5j/1xO.D.C.S.a.s.Q', 'Cashier'),
-            (5, 'Sheriff', 'sherpackage@gmail.com', '$2y$10$tOg7FEG.3N/4xN1jTJRk9OedNymycxGNXu01xfIB27LLlz/dBjNhi', 'Admin'),
-            (6, 'iya fatuuu', 'matosh@gmail.com', '$2y$10$NNw.s2GDGF5tCgAA2TmP1.uakQgcv3WyKJzAdYHmmfI81w1amFBhK', 'Cashier'),
-            (7, 'Cashier 1', 'cashier@gmail.com', '$2y$10$1ZvoqysJcur1juZfiZ5eUOBPhUpGGxV5nW9UrmNMDLA9XKYYVHbOG', 'Cashier')";
+            (2, 'Cashier User', 'cashier@example.com', '\$2y\$10\$N9.gBY.G.bVbT9CqK.E2.O0R0M.lI.H/GAg5j/1xO.D.C.S.a.s.Q', 'Cashier'),
+            (5, 'Sheriff', 'sherpackage@gmail.com', '\$2y\$10\$tOg7FEG.3N/4xN1jTJRk9OedNymycxGNXu01xfIB27LLlz/dBjNhi', 'Admin'),
+            (6, 'iya fatuuu', 'matosh@gmail.com', '\$2y\$10\$NNw.s2GDGF5tCgAA2TmP1.uakQgcv3WyKJzAdYHmmfI81w1amFBhK', 'Cashier'),
+            (7, 'Cashier 1', 'cashier@gmail.com', '\$2y\$10\$1ZvoqysJcur1juZfiZ5eUOBPhUpGGxV5nW9UrmNMDLA9XKYYVHbOG', 'Cashier')";
         
         $pdo->exec($insertSql);
         echo "Users seeded successfully.\n";
